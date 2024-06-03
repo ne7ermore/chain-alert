@@ -1,16 +1,17 @@
 import argparse
 
 import requests
+import asyncio
+import aiohttp
 
 from common import *
 from secret import *
 
-from datetime import datetime
-
 from rich.console import Console
 from rich.table import Table
 
-logger = configure_logger('bian-volume-alert-crontab.log')
+
+logger = configure_logger('top-position-ratio.log')
 
 
 def one_hour(channel):
@@ -38,10 +39,12 @@ def one_hour(channel):
             alerts.append([token_hour["symbol"], token_hour["lastPrice"], volume_1d, round(volume_1h/avg_volume, 1)])       
 
     if len(alerts) != 0:
-        table = Table(title=f"One-Hour Volume Info: {str(datetime.now())[:19]}")
-        table.add_column(["Token", "Price", "Volume", "Times"])
-        table.add_row(*alerts)
-        sned_alerts_to_dc(logger, table, channel)
+        content = "One-Hour Volume Info"
+
+        for [symbol, lastPrice, volume_1d, times] in alerts:
+            content += f"\nToken: {symbol}\nPrice:{lastPrice}\nVolume: {volume_1d}\nTimes: {times}\n--------------------------------------------\n"
+
+        sned_alerts_to_dc(logger, content, channel)
 
 
 if __name__ == "__main__":
