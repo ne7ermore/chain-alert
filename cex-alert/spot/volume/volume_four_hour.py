@@ -1,10 +1,14 @@
+import argparse
+
 import requests
 
 from common import *
+from secret import *
+
 
 logger = configure_logger('bian-volume-alert-crontab.log')
 
-def four_hour():
+def four_hour(channel):
     try:
         rep_hour = requests.get(f'https://api.binance.com/api/v3/ticker?symbols={symbols}&type=MINI&windowSize=4h')
         rep_hour.raise_for_status()
@@ -34,8 +38,15 @@ def four_hour():
         for [symbol, lastPrice, volume_1d, times] in alerts:
             content += f"\nToken: {symbol}\nPrice:{lastPrice}\nVolume: {volume_1d}\nTimes: {times}\n--------------------------------------------\n"
 
-        sned_alerts_to_dc(logger, content, "")
+        sned_alerts_to_dc(logger, content, channel)
 
 
 if __name__ == "__main__":
-    four_hour()
+    parser = argparse.ArgumentParser(description='volume')
+    parser.add_argument('--channel', type=int, default=1)
+    args = parser.parse_args()
+
+    if args.channel == 0:
+        four_hour(test_channel)
+    else:
+        four_hour(dc_channel)
