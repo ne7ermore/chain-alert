@@ -10,7 +10,8 @@ from secret import *
 
 symbols = ["BTCUSDT","ETHUSDT","AVAXUSDT","ATOMUSDT","TIAUSDT","PYTHUSDT","STRKUSDT","ORDIUSDT","DYMUSDT","RDNTUSDT"]
 
-RATIO = 1.5
+LONGRATIO = 1.5
+SHORTRATIO = 0.75
 
 BIAN_API = "https://fapi.binance.com"
 

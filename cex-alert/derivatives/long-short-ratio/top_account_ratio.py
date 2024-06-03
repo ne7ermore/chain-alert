@@ -7,7 +7,7 @@ from secret import *
 
 import pandas as pd
 
-logger = configure_logger('top-position-ratio.log')
+logger = configure_logger('top-account-ratio.log')
 
 def main(channel):
     alerts = []
@@ -18,7 +18,7 @@ def main(channel):
 
             rep_hour_js = rep_hour.json()[0]
             long_short_ratio = float(rep_hour_js["longShortRatio"])
-            if long_short_ratio > RATIO:
+            if long_short_ratio > LONGRATIO or long_short_ratio < SHORTRATIO:
                 alerts.append([rep_hour_js["symbol"], round(long_short_ratio, 2), round(float(rep_hour_js["longAccount"]), 2)])
 
     except requests.RequestException as e:
