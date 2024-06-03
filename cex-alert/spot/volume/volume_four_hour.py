@@ -5,6 +5,7 @@ import requests
 from common import *
 from secret import *
 
+import pandas as pd
 
 logger = configure_logger('bian-volume-alert-crontab.log')
 
@@ -30,14 +31,12 @@ def four_hour(channel):
         avg_volume = (volume_1d-volume_1h)/23            
 
         if volume_1h >= avg_volume*RATIO:
-            alerts.append([token_hour["symbol"], token_hour["lastPrice"], volume_1d, round(volume_1h/avg_volume, 1)])       
+            alerts.append([token_hour["symbol"], round(volume_1h/avg_volume, 1), float(token_hour["lastPrice"]), volume_1d])       
 
     if len(alerts) != 0:
-        content = "Four-Hour Volume Info"
-
-        for [symbol, lastPrice, volume_1d, times] in alerts:
-            content += f"\nToken: {symbol}\nPrice:{lastPrice}\nVolume: {volume_1d}\nTimes: {times}\n--------------------------------------------\n"
-
+        alerts.sort(key=lambda x: x[1], reverse=True)
+        df = pd.DataFrame(alerts, columns=['Symbol', 'Times', 'Price', 'Volume'])
+        content = f"Four-Hour Volume Info\n{df.to_string(index=False)}"
         sned_alerts_to_dc(logger, content, channel)
 
 

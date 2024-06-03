@@ -5,10 +5,7 @@ import requests
 from common import *
 from secret import *
 
-from datetime import datetime
-
-from rich.console import Console
-from rich.table import Table
+import pandas as pd
 
 logger = configure_logger('bian-volume-alert-crontab.log')
 
@@ -35,13 +32,13 @@ def one_hour(channel):
         avg_volume = (volume_1d-volume_1h)/23            
 
         if volume_1h >= avg_volume*RATIO:
-            alerts.append([token_hour["symbol"], token_hour["lastPrice"], volume_1d, round(volume_1h/avg_volume, 1)])       
+            alerts.append([token_hour["symbol"], round(volume_1h/avg_volume, 1), float(token_hour["lastPrice"]), volume_1d])       
 
     if len(alerts) != 0:
-        table = Table(title=f"One-Hour Volume Info: {str(datetime.now())[:19]}")
-        table.add_column(["Token", "Price", "Volume", "Times"])
-        table.add_row(*alerts)
-        sned_alerts_to_dc(logger, table, channel)
+        alerts.sort(key=lambda x: x[1], reverse=True)
+        df = pd.DataFrame(alerts, columns=['Symbol', 'Times', 'Price', 'Volume'])
+        content = f"One-Hour Volume Info\n{df.to_string(index=False)}"
+        sned_alerts_to_dc(logger, content, channel)
 
 
 if __name__ == "__main__":

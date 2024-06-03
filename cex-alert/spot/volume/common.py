@@ -44,4 +44,4 @@ def sned_alerts_to_dc(logger, content, channel_id):
         res = requests.post(url=url, headers=headers, data=json.dumps(msg))
         res.raise_for_status()  
     except requests.RequestException as e:
-        logger.error(e)
+        logger.error(e)     
