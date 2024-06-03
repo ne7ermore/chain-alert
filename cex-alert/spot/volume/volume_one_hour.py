@@ -7,9 +7,9 @@ logger = configure_logger('bian-volume-alert-crontab.log')
 
 def one_hour():
     try:
-        rep_hour = requests.get(f'https://api.binance.com/api/v3/ticker?symbols={symbols}&type=MINI&windowSize=1h')
+        rep_hour = requests.get(f'{BIAN_API}/ticker?symbols={symbols}&type=MINI&windowSize=1h')
         rep_hour.raise_for_status()
-        rep_day = requests.get(f'https://api.binance.com/api/v3/ticker?symbols={symbols}&type=MINI&windowSize=1d')          
+        rep_day = requests.get(f'{BIAN_API}/ticker?symbols={symbols}&type=MINI&windowSize=1d')          
         rep_day.raise_for_status()
     except requests.RequestException as e:
         logger.error(f"Error sending faucet request: {e}")

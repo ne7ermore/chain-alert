@@ -14,6 +14,8 @@ symbols = '["BTCUSDT","ETHUSDT","BNBUSDT","SOLUSDT","XRPUSDT","DOGEUSDT","ADAUSD
 
 RATIO = 2
 
+BIAN_API = "https://api.binance.com/api/v3"
+
 def configure_logger(file_name):
     """配置日志记录器"""
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

@@ -1,0 +1,2 @@
+0 */4 * * * cd /root/schedule && python3 volume_four_hour.py
+0 * * * * cd /root/schedule && python3 volunm_one_hour.py
