@@ -1,49 +1,33 @@
 import argparse
 
 import requests
-import asyncio
-import aiohttp
 
 from common import *
 from secret import *
 
-from rich.console import Console
-from rich.table import Table
-
+import pandas as pd
 
 logger = configure_logger('top-position-ratio.log')
 
-
-def one_hour(channel):
+def main(channel):
+    alerts = []
     try:
-        rep_hour = requests.get(f'{BIAN_API}/ticker?symbols={symbols}&type=MINI&windowSize=1h')
-        rep_hour.raise_for_status()
-        rep_day = requests.get(f'{BIAN_API}/ticker?symbols={symbols}&type=MINI&windowSize=1d')          
-        rep_day.raise_for_status()
+        for symbol in symbols:
+            rep_hour = requests.get(f"{BIAN_API}/futures/data/globalLongShortAccountRatio?symbol={symbol}&period=1h&limit=1")
+            rep_hour.raise_for_status()
+
+            rep_hour_js = rep_hour.json()[0]
+            long_short_ratio = float(rep_hour_js["longShortRatio"])
+            if long_short_ratio > RATIO:
+                alerts.append([rep_hour_js["symbol"], round(long_short_ratio, 2), round(float(rep_hour_js["longAccount"]), 2)])
+
     except requests.RequestException as e:
         logger.error(f"Error sending faucet request: {e}")
-
-    alerts = []
-
-    rep_hour_js = rep_hour.json()
-    rep_day_js = rep_day.json()
-
-    for token_hour, token_day in zip(rep_hour_js, rep_day_js):
-        assert token_hour["symbol"] == token_day["symbol"]
-
-        volume_1d = float(token_day["volume"])
-        volume_1h = float(token_hour["volume"])
-        avg_volume = (volume_1d-volume_1h)/23            
-
-        if volume_1h >= avg_volume*RATIO:
-            alerts.append([token_hour["symbol"], token_hour["lastPrice"], volume_1d, round(volume_1h/avg_volume, 1)])       
-
+    
     if len(alerts) != 0:
-        content = "One-Hour Volume Info"
-
-        for [symbol, lastPrice, volume_1d, times] in alerts:
-            content += f"\nToken: {symbol}\nPrice:{lastPrice}\nVolume: {volume_1d}\nTimes: {times}\n--------------------------------------------\n"
-
+        alerts.sort(key=lambda x: x[1], reverse=True)
+        df = pd.DataFrame(alerts, columns=['Symbol', 'longShortRatio', 'longAccount'])
+        content = f"One-Hour Top Position Ratio\n{df.to_string(index=False)}"
         sned_alerts_to_dc(logger, content, channel)
 
 
@@ -53,6 +37,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.channel == 0:
-        one_hour(test_channel)
+        main(test_channel)
     else:
-        one_hour(dc_channel)
+        main(dc_channel)
