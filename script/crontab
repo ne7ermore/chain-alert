@@ -1,2 +1,5 @@
 0 */4 * * * cd /root/chain-alert/cex-alert/spot/volume && python3 volume_four_hour.py
 0 * * * * cd /root/chain-alert/cex-alert/spot/volume && python3 volunm_one_hour.py
+0 * * * * cd /root/chain-alert/cex-alert/derivatives/long-short-ratio && python3 top_position_ratio.py
+0 * * * * cd /root/chain-alert/cex-alert/derivatives/long-short-ratio && python3 top_account_ratio.py
+0 * * * * cd /root/chain-alert/cex-alert/derivatives/long-short-ratio && python3 global_ratio.py
