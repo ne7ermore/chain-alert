@@ -1,11 +1,10 @@
 import argparse
+from datetime import datetime
 
 import requests
 
 from common import *
 from secret import *
-
-import pandas as pd
 
 logger = configure_logger('global-ratio.log')
 
@@ -23,12 +22,18 @@ def main(channel):
 
     except requests.RequestException as e:
         logger.error(f"Error sending faucet request: {e}")
-    
-    if len(alerts) != 0:
-        alerts.sort(key=lambda x: x[1], reverse=True)
-        df = pd.DataFrame(alerts, columns=['Symbol', 'Ratio', 'longAccount'])
-        content = f"One-Hour Global Account Ratio\n{df.to_string(index=False)}"
-        sned_alerts_to_dc(logger, content, channel)
+
+    if len(alerts)!= 0:
+        content = f"One-Hour Global Account Ratio | {str(datetime.now())[5:19]}\n```\n"
+        content += "Symbol     Ratio      Long Account\n"
+        content += "------------------------------------\n"
+        
+        alerts.sort(key=lambda x:x[1], reverse=True)
+        for symbol, ratio, longAccount in alerts:
+            content += f"{symbol:<10} {ratio:>5} {longAccount:>10}\n"
+        content += "```"
+        
+        sned_alerts_to_dc(logger, content, channel)           
 
 
 if __name__ == "__main__":
