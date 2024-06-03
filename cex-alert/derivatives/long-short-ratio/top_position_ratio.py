@@ -1,5 +1,6 @@
 import argparse
 from datetime import datetime
+from pytz import timezone
 
 import requests
 
@@ -24,8 +25,8 @@ def main(channel):
     except requests.RequestException as e:
         logger.error(f"Error sending faucet request: {e}")
 
-    if len(alerts)!= 0:
-        content = f"One-Hour Top Position Ratio | {str(datetime.now())[5:19]}\n```\n"
+    if len(alerts)!= 0:        
+        content = f"One-Hour Top Position Ratio | {str(datetime.now().replace(tzinfo=timezone('Asia/Shanghai')))[5:16]}\n```\n"
         content += "Symbol     Ratio      Long Account\n"
         content += "------------------------------------\n"
         

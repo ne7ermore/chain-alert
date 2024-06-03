@@ -1,4 +1,6 @@
 import argparse
+from datetime import datetime
+from pytz import timezone
 
 import requests
 
@@ -34,11 +36,17 @@ def one_hour(channel):
         if volume_1h >= avg_volume*RATIO:
             alerts.append([token_hour["symbol"], round(volume_1h/avg_volume, 1), float(token_hour["lastPrice"]), volume_1d])       
 
-    if len(alerts) != 0:
-        alerts.sort(key=lambda x: x[1], reverse=True)
-        df = pd.DataFrame(alerts, columns=['Symbol', 'Times', 'Price', 'Volume'])
-        content = f"One-Hour Volume Info\n{df.to_string(index=False)}"
-        sned_alerts_to_dc(logger, content, channel)
+    if len(alerts)!= 0:
+        content = f"One-Hour Volume Info | {str(datetime.now().replace(tzinfo=timezone('Asia/Shanghai')))[5:16]}\n```\n"
+        content += "Symbol     Times      Price         Volume\n"
+        content += "-----------------------------------------------\n"
+        
+        alerts.sort(key=lambda x:x[1], reverse=True)
+        for symbol, times, price, volume in alerts:
+            content += f"{symbol:<10} {times:>5} {price:>10}  {volume:>16}\n"
+        content += "```"
+        
+        sned_alerts_to_dc(logger, content, channel)    
 
 
 if __name__ == "__main__":
