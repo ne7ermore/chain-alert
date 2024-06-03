@@ -13,7 +13,7 @@ def main(channel):
     alerts = []
     try:
         for symbol in symbols:
-            rep_hour = requests.get(f"{BIAN_API}/futures/data/topLongShortAccountRatio?symbol={symbol}&period=1h&limit=1")
+            rep_hour = requests.get(f"{BIAN_API}/futures/data/globalLongShortAccountRatio?symbol={symbol}&period=1h&limit=1")
             rep_hour.raise_for_status()
 
             rep_hour_js = rep_hour.json()[0]
@@ -26,8 +26,8 @@ def main(channel):
     
     if len(alerts) != 0:
         alerts.sort(key=lambda x: x[1], reverse=True)
-        df = pd.DataFrame(alerts, columns=['Symbol', 'Ratio', 'LongAccount'])
-        content = f"One-Hour Top Account Ratio\n{df.to_string(index=False)}"
+        df = pd.DataFrame(alerts, columns=['Symbol', 'Ratio', 'longAccount'])
+        content = f"One-Hour Global Account Ratio\n{df.to_string(index=False)}"
         sned_alerts_to_dc(logger, content, channel)
 
 

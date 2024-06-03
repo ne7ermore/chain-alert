@@ -26,7 +26,7 @@ def main(channel):
     
     if len(alerts) != 0:
         alerts.sort(key=lambda x: x[1], reverse=True)
-        df = pd.DataFrame(alerts, columns=['Symbol', 'longShortRatio', 'longAccount'])
+        df = pd.DataFrame(alerts, columns=['Symbol', 'Ratio', 'LongAccount'])
         content = f"One-Hour Top Position Ratio\n{df.to_string(index=False)}"
         sned_alerts_to_dc(logger, content, channel)
 
