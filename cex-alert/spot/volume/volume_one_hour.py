@@ -42,7 +42,7 @@ def one_hour(channel):
         
         alerts.sort(key=lambda x:x[1], reverse=True)
         for symbol, times, price, volume in alerts:
-            content += f"{symbol:<10} {times:>5} {price:>10}  {volume:>16}\n"
+            content += f"{symbol:<10} {times:>5} {price:>10}  {'{:,}'.format(volume):>16}\n"
         content += "```"
         
         sned_alerts_to_dc(logger, content, channel)    
