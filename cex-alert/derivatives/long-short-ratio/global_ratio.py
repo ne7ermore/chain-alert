@@ -1,6 +1,5 @@
 import argparse
 from datetime import datetime
-from pytz import timezone
 
 import requests
 
@@ -25,13 +24,13 @@ def main(channel):
         logger.error(f"Error sending faucet request: {e}")
 
     if len(alerts)!= 0:
-        content = f"One-Hour Global Account Ratio | {str(datetime.now().replace(tzinfo=timezone('Asia/Shanghai')))[5:16]}\n```\n"
+        content = f"One-Hour Global Account Ratio | {str(datetime.now())[5:16]}\n```\n"
         content += "Symbol     Ratio      Long Account\n"
         content += "------------------------------------\n"
         
         alerts.sort(key=lambda x:x[1], reverse=True)
         for symbol, ratio, longAccount in alerts:
-            content += f"{symbol:<10} {ratio:>5} {longAccount:>10}\n"
+            content += f"{symbol:<10} {ratio:>} {longAccount:>10}\n"
         content += "```"
         
         sned_alerts_to_dc(logger, content, channel)           

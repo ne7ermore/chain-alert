@@ -1,6 +1,5 @@
 import argparse
 from datetime import datetime
-from pytz import timezone
 
 import requests
 
@@ -35,7 +34,7 @@ def four_hour(channel):
 
 
     if len(alerts)!= 0:
-        content = f"Four-Hour Volume Info | {str(datetime.now().replace(tzinfo=timezone('Asia/Shanghai')))[5:16]}\n```\n"
+        content = f"Four-Hour Volume Info | {str(datetime.now())[5:16]}\n```\n"
         content += "Symbol     Times      Price         Volume\n"
         content += "-----------------------------------------------\n"
         

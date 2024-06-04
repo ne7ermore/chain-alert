@@ -1,6 +1,5 @@
 import argparse
 from datetime import datetime
-from pytz import timezone
 
 import requests
 
@@ -37,7 +36,7 @@ def one_hour(channel):
             alerts.append([token_hour["symbol"], round(volume_1h/avg_volume, 1), float(token_hour["lastPrice"]), volume_1d])       
 
     if len(alerts)!= 0:
-        content = f"One-Hour Volume Info | {str(datetime.now().replace(tzinfo=timezone('Asia/Shanghai')))[5:16]}\n```\n"
+        content = f"One-Hour Volume Info | {str(datetime.now())[5:16]}\n```\n"
         content += "Symbol     Times      Price         Volume\n"
         content += "-----------------------------------------------\n"
         
