@@ -79,10 +79,10 @@ def get_premium_info(symbols):
     results = []
     symbols = set(ast.literal_eval(symbols))
     for item in datas:
-        # if item['symbol'] in symbols:
+        if item['symbol'] in symbols:
             funding_rate_percent = float(item['lastFundingRate']) * 100  # 转换为百分比
-            # 如果资金费率为负或者大于0.03%，进行收集
-            if funding_rate_percent < 0 or funding_rate_percent >= 0.1:
+            # 如果资金费率为负或者大于0.02%，进行收集
+            if funding_rate_percent < 0 or funding_rate_percent >= 0.02:
                 results.append(
                     [item['symbol'],         # 交易对
                     item['markPrice'],       # 标记价格
