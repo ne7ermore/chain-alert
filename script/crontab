@@ -3,3 +3,4 @@
 0 * * * * cd /root/chain-alert/cex-alert/derivatives/long-short-ratio && python3 top_position_ratio.py
 0 * * * * cd /root/chain-alert/cex-alert/derivatives/long-short-ratio && python3 top_account_ratio.py
 0 * * * * cd /root/chain-alert/cex-alert/derivatives/long-short-ratio && python3 global_ratio.py
+0 * * * * cd /root/chain-alert/cex-alert/derivatives/funding-rate && python3 funding_rate.py
