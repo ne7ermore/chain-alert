@@ -10,7 +10,12 @@ from secret import *
 
 symbols = '["BTCUSDT","ETHUSDT","BNBUSDT","SOLUSDT","XRPUSDT","DOGEUSDT","ADAUSDT","SHIBUSDT","AVAXUSDT","LINKUSDT","DOTUSDT","NEARUSDT","MATICUSDT","PEPEUSDT","UNIUSDT","FETUSDT","APTUSDT","RNDRUSDT","HBARUSDT","IMXUSDT","ATOMUSDT","FILUSDT","WIFUSDT","ARBUSDT","TAOUSDT","OPUSDT","ARUSDT","MKRUSDT","SUIUSDT","INJUSDT","THETAUSDT","FTMUSDT","RUNEUSDT","LDOUSDT","TIAUSDT","PYTHUSDT","SEIUSDT","AAVEUSDT","ALGOUSDT","GALAUSDT","JUPUSDT","STRKUSDT","FLOWUSDT","ENAUSDT","AXSUSDT","WUSDT","PENDLEUSDT","SANDUSDT","SNXUSDT","BOMEUSDT","MINAUSDT","ORDIUSDT","DYMUSDT","RDNTUSDT","CKBUSDT","AEVOUSDT","LPTUSDT","AXLUSDT","ETHFIUSDT","DYDXUSDT","ZRXUSDT","METISUSDT","SSVUSDT","JTOUSDT","IDUSDT","PEOPLEUSDT","ALTUSDT","ARKMUSDT","COSUSDT","AGLDUSDT","BEAMXUSDT","RIFUSDT","POLYXUSDT","BLURUSDT","STXUSDT","DUSKUSDT","SYSUSDT","SAGAUSDT","CREAMUSDT","BBUSDT","TNSRUSDT","ENSUSDT"]'
 
-RATIO = 2
+max_funding_rate_percent_hreshold = 0.02
+min_funding_rate_percent_hreshold = 0
+
+channel_id = 1247100925609246752
+channel_id_test = 1247039575151607858
+
 
 BIAN_API = "https://api.binance.com/api/v3"
 
@@ -25,7 +30,7 @@ def configure_logger(file_name):
     logger.addHandler(handler)
     return logger
 
-def sned_alerts_to_dc(logger, content, channel_id):
+def send_alerts_to_dc(logger, content, channel_id):
     msg = {
         "content": content,
         "nonce": str(uuid.uuid4())[:25],

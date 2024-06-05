@@ -11,15 +11,20 @@ from common import *
 # from spot.volume.common import symbols, sned_alerts_to_dc, configure_logger
 
 
-logger = configure_logger('bian-long_short_ratios-alert-crontab.log')
+logger = configure_logger('bian-premium_info-alert-crontab.log')
 
 def send_long_message_in_parts(logger, content, channel_id):
     max_length = 2000
     parts = []
     current_part = ""
 
+    # 第一部分是独立的标题
+    if content.startswith("**"):
+        header, content = content.split('\n', 1)
+        parts.append(header + "\n")
+    
     for line in content.split('\n'):
-        if len(current_part) + len(line) + 1 > max_length:
+        if len(current_part) + len(line) + 1 > max_length - 6:  # 减去代码块标记的长度:
             parts.append(current_part)
             current_part = line + "\n"
         else:
@@ -28,8 +33,13 @@ def send_long_message_in_parts(logger, content, channel_id):
     if current_part:
         parts.append(current_part)
 
-    for part in parts:
-        sned_alerts_to_dc(logger, part.strip(), channel_id)
+    for i, part in enumerate(parts):
+        if i == 0 and part.startswith("**"):
+            send_alerts_to_dc(logger, part.strip(), channel_id)
+        else:
+            part_with_code_block = "```\n" + part.strip() + "\n```"
+            send_alerts_to_dc(logger, part_with_code_block, channel_id)
+
 
 def get_funding_rate(symbols):
     # 查询资金费率历史（U本位合约）
@@ -52,8 +62,7 @@ def get_funding_rate(symbols):
                 results.append([item['symbol'], item['markPrice'], funding_rate_percent, datetime.fromtimestamp(item['fundingTime']/1000)])
 
     if len(results) != 0:
-        content = "Get Funding Rate History\n"
-        content += "```\n"  # 开始代码块
+        content = f"**Get Funding Rate History** | {str(datetime.now())[5:16]}\n"
         content += "  Symbol      MarkPrice      FundingRate(%)   FundingTime\n"
         content += "----------------------------------------------------------------\n"
 
@@ -61,12 +70,10 @@ def get_funding_rate(symbols):
             formatted_rate = ('%.6f' % fundingRate).rstrip('0').rstrip('.')  # 去除尾随零和小数点
             content += f"{symbol:<10}  {markPrice:>12}      {formatted_rate:>8}%      {fundingTime.strftime('%Y-%m-%d %H:%M')}\n"
 
-        content += "```"  # 结束代码块
-
         send_long_message_in_parts(logger, content, 1247100925609246752)
 
 def get_premium_info(symbols):
-    # 查询资金费率历史（U本位合约）
+    # 查询最新标记价格和资金费率（U本位合约）
     url = 'https://fapi.binance.com/fapi/v1/premiumIndex'
     response = requests.get(url)
 
@@ -82,7 +89,7 @@ def get_premium_info(symbols):
         if item['symbol'] in symbols:
             funding_rate_percent = float(item['lastFundingRate']) * 100  # 转换为百分比
             # 如果资金费率为负或者大于0.02%，进行收集
-            if funding_rate_percent < 0 or funding_rate_percent >= 0.02:
+            if funding_rate_percent < min_funding_rate_percent_hreshold or funding_rate_percent >= max_funding_rate_percent_hreshold:
                 results.append(
                     [item['symbol'],         # 交易对
                     item['markPrice'],       # 标记价格
@@ -94,19 +101,15 @@ def get_premium_info(symbols):
                     ])
 
     if len(results) != 0:
-        # content = "Get Funding Rate History | " + fundingTime.strftime('%m-%d %H:%M') + '\n'
-        content = "Get Funding Rate History \n"
-        content += "```\n"  # 开始代码块
+        content = f"**Get Funding Rate History** | {str(datetime.now())[5:16]}\n"
         content += " Symbol             MarkPrice        IndexPrice      FundingRate   NextFundingTime \n"
         content += "---------------------------------------------------------------------------------\n"
 
         for symbol, markPrice, indexPrice, fundingRate, fundingTime, nextFundingTime, _ in results:
             formatted_rate = ('%.6f' % fundingRate).rstrip('0').rstrip('.')  # 去除尾随零和小数点
             content += f"{symbol:<13}  {markPrice.rstrip('0').rstrip('.'):>14}    {indexPrice.rstrip('0').rstrip('.'):>14}    {formatted_rate:>10}%      {nextFundingTime.strftime('%m-%d %H:%M')}\n"
-
-        content += "```"  # 结束代码块
-
-        send_long_message_in_parts(logger, content, 1247100925609246752)
+        
+        send_long_message_in_parts(logger, content, channel_id)
 
 
 def get_funding_info(symbols):
