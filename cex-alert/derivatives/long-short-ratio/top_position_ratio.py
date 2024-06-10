@@ -26,12 +26,12 @@ def main(channel):
 
     if len(alerts)!= 0:        
         content = f"One-Hour Top Position Ratio | {str(datetime.now())[5:16]}\n```\n"
-        content += "Symbol     Ratio      Long Account\n"
+        content += "Symbol      LongAcc    Ratio\n"
         content += "------------------------------------\n"
         
         alerts.sort(key=lambda x:x[1], reverse=True)
         for symbol, ratio, longAccount in alerts:
-            content += f"{symbol:<10} {ratio:>5} {longAccount:>10}\n"
+            content += f"{symbol:<10} {longAccount:>5} {ratio:>10}\n"
         content += "```"
         
         sned_alerts_to_dc(logger, content, channel)     
