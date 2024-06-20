@@ -5,7 +5,7 @@ from datetime import datetime
 import requests
 from secret import *
 from common import *
-
+import pytz
 # current_dir = os.path.dirname(os.path.abspath(__file__))
 # sys.path.append(os.path.join(current_dir, '..', '..'))
 # from spot.volume.common import symbols, sned_alerts_to_dc, configure_logger
@@ -103,7 +103,8 @@ def get_premium_info(symbols):
     if len(results) != 0:
         # 按照资金费率降序排列
         results_sorted = sorted(results, key=lambda x: x[3], reverse=True)
-        content = f"**Get Funding Rate History** | {str(datetime.now())[5:16]}\n"
+        shanghai_tz = pytz.timezone('Asia/Shanghai')
+        content = f"**Get Funding Rate History** | {str(datetime.now(shanghai_tz))[5:16]}\n"
         # content += " Symbol             MarkPrice        IndexPrice      FundingRate   NextFundingTime \n"
         # content += "---------------------------------------------------------------------------------\n"
         content += " Symbol             MarkPrice        IndexPrice      FundingRate \n"
@@ -114,7 +115,7 @@ def get_premium_info(symbols):
             # content += f"{symbol:<13}  {markPrice.rstrip('0').rstrip('.'):>14}    {indexPrice.rstrip('0').rstrip('.'):>14}    {formatted_rate:>10}%      {nextFundingTime.strftime('%m-%d %H:%M')}\n"
             content += f"{symbol:<13}  {markPrice.rstrip('0').rstrip('.'):>14}    {indexPrice.rstrip('0').rstrip('.'):>14}    {formatted_rate:>10}%\n"
         
-        send_long_message_in_parts(logger, content, channel_id_test)
+        send_long_message_in_parts(logger, content, channel_id)
 
 
 def get_funding_info(symbols):
