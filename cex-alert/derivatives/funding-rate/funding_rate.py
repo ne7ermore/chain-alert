@@ -101,15 +101,20 @@ def get_premium_info(symbols):
                     ])
 
     if len(results) != 0:
+        # 按照资金费率降序排列
+        results_sorted = sorted(results, key=lambda x: x[3], reverse=True)
         content = f"**Get Funding Rate History** | {str(datetime.now())[5:16]}\n"
-        content += " Symbol             MarkPrice        IndexPrice      FundingRate   NextFundingTime \n"
-        content += "---------------------------------------------------------------------------------\n"
+        # content += " Symbol             MarkPrice        IndexPrice      FundingRate   NextFundingTime \n"
+        # content += "---------------------------------------------------------------------------------\n"
+        content += " Symbol             MarkPrice        IndexPrice      FundingRate \n"
+        content += "---------------------------------------------------------------\n"
 
-        for symbol, markPrice, indexPrice, fundingRate, fundingTime, nextFundingTime, _ in results:
+        for symbol, markPrice, indexPrice, fundingRate, fundingTime, nextFundingTime, _ in results_sorted:
             formatted_rate = ('%.6f' % fundingRate).rstrip('0').rstrip('.')  # 去除尾随零和小数点
-            content += f"{symbol:<13}  {markPrice.rstrip('0').rstrip('.'):>14}    {indexPrice.rstrip('0').rstrip('.'):>14}    {formatted_rate:>10}%      {nextFundingTime.strftime('%m-%d %H:%M')}\n"
+            # content += f"{symbol:<13}  {markPrice.rstrip('0').rstrip('.'):>14}    {indexPrice.rstrip('0').rstrip('.'):>14}    {formatted_rate:>10}%      {nextFundingTime.strftime('%m-%d %H:%M')}\n"
+            content += f"{symbol:<13}  {markPrice.rstrip('0').rstrip('.'):>14}    {indexPrice.rstrip('0').rstrip('.'):>14}    {formatted_rate:>10}%\n"
         
-        send_long_message_in_parts(logger, content, channel_id)
+        send_long_message_in_parts(logger, content, channel_id_test)
 
 
 def get_funding_info(symbols):
