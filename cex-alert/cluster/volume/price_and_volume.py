@@ -29,7 +29,7 @@ def main(args):
         priceChangePercent = token["priceChangePercent"]
         quoteVolume = token["quoteVolume"]
         price = float(token["lastPrice"])
-        alerts.append([symbol, priceChangePercent, round(float(quoteVolume),2), price])
+        alerts.append([symbol, priceChangePercent, round(float(quoteVolume),0), price])
 
     if args.sort_type == "price":
         alerts.sort(key=lambda x:x[1], reverse=True)
@@ -42,8 +42,8 @@ def main(args):
     table = Table(title=f"{message}: {str(datetime.now())[5:19]}")
     table.add_column("币种")
     table.add_column("涨幅")
-    table.add_column("现货交易量")
-    table.add_column("期货交易量")
+    table.add_column("现货交易量", justify="right")
+    table.add_column("期货交易量", justify="right")
 
     for symbol, priceChangePercent, volume, price in alerts:
         try:
@@ -58,7 +58,7 @@ def main(args):
         if len(rep.json()):
             rep_js = rep.json()[0]        
             future_quoteVolume = (float(rep_js["buyVol"])+float(rep_js["sellVol"]))*price
-            future_quoteVolume = round(float(future_quoteVolume),2)
+            future_quoteVolume = round(float(future_quoteVolume),0)
         else:
             future_quoteVolume = 0.
 
