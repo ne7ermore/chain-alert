@@ -26,7 +26,7 @@ def main(args):
     alerts = []
     for token in spot_rep_js_list:
         symbol = token["symbol"]
-        priceChangePercent = token["priceChangePercent"]
+        priceChangePercent = float(token["priceChangePercent"])
         quoteVolume = token["quoteVolume"]
         price = float(token["lastPrice"])
         alerts.append([symbol, priceChangePercent, round(float(quoteVolume),0), price])
