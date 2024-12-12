@@ -33,13 +33,13 @@ def main(args):
 
     if args.sort_type == "price":
         alerts.sort(key=lambda x:x[1], reverse=True)
-        message = f"{duration}价格涨幅榜"
+        message = f"币安{duration}价格涨幅top{args.top}"
     else:
         alerts.sort(key=lambda x:x[2], reverse=True)
-        message = f"{duration}现货交易量涨幅榜"
+        message = f"币安{duration}现货交易量涨幅top{args.top}"
 
     alerts = alerts[:args.top]
-    table = Table(title=f"{message}: {str(datetime.now())[5:19]}")
+    table = Table(title=f"{str(datetime.now())[5:19]}:{message}")
     table.add_column("币种")
     table.add_column("涨幅")
     table.add_column("现货交易量", justify="right")

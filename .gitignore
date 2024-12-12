@@ -1,5 +1,5 @@
 test.*
-secret.py
+secret*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
